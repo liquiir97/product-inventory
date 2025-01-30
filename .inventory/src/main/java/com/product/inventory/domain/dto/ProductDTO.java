@@ -23,6 +23,8 @@ public class ProductDTO implements Serializable {
     @Min(value = 0, message = "Quantity must be greater than or equal to 0")
     private Long quantity;
 
+    private CategoryDTO category;
+
     public Long getId() {
         return id;
     }
@@ -63,6 +65,14 @@ public class ProductDTO implements Serializable {
         this.quantity = quantity;
     }
 
+    public CategoryDTO getCategory() {
+        return category;
+    }
+
+    public void setCategory(CategoryDTO category) {
+        this.category = category;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -93,6 +103,7 @@ public class ProductDTO implements Serializable {
                 ", description='" + getDescription() + "'" +
                 ", price='" + getPrice() + "'" +
                 ", quantity='" + getQuantity() + "'" +
+                ", category='" + getCategory() + "'" +
                 "}";
     }
 }

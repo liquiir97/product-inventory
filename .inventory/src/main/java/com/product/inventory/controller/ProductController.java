@@ -1,7 +1,10 @@
 package com.product.inventory.controller;
 
+import com.product.inventory.domain.dto.CategoryDTO;
 import com.product.inventory.domain.dto.ProductDTO;
+import com.product.inventory.repository.CategoryRepository;
 import com.product.inventory.repository.ProductRepository;
+import com.product.inventory.service.CategoryService;
 import com.product.inventory.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.apache.tomcat.util.http.ResponseUtil;
@@ -32,10 +35,13 @@ public class ProductController {
 
     private final ProductRepository productRepository;
 
-    public ProductController(ProductService productService, ProductRepository productRepository)
+    private final CategoryRepository categoryRepository;
+
+    public ProductController(ProductService productService, ProductRepository productRepository, CategoryRepository categoryRepository)
     {
         this.productService = productService;
         this.productRepository = productRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     @PostMapping("")
@@ -48,20 +54,24 @@ public class ProductController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "New " + ENTITY_NAME + " cannot have an ID");
         }
 
+        if(productDTO.getCategory() != null && productDTO.getCategory().getId() != null && !this.categoryRepository.existsById(productDTO.getCategory().getId()))
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no category with this id " + productDTO.getCategory().getId().toString());
+        }
+
         productDTO = this.productService.save(productDTO);
 
         return new ResponseEntity<>(productDTO, HttpStatus.CREATED);
     }
 
     @GetMapping("")
-    public ResponseEntity<Page<ProductDTO>> getAllNews(Pageable pageable)
+    public ResponseEntity<Page<ProductDTO>> getAllProducts(Pageable pageable)
     {
         LOG.debug("REST request to get a page of Products");
         Page<ProductDTO> productDTOPage = this.productService.findAll(pageable);
         return ResponseEntity.ok().body(productDTOPage);
     }
 
-    @Operation(summary = "Get all products", description = "Returns a paginated list of products")
     @GetMapping("/{id}")
     public ResponseEntity<ProductDTO> getById(@PathVariable("id") Long id)
     {
@@ -90,10 +100,13 @@ public class ProductController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Entity not found: id not found");
         }
 
+        if(productDTO.getCategory() != null && productDTO.getCategory().getId() != null && !this.categoryRepository.existsById(productDTO.getCategory().getId()))
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is no category with this id " + productDTO.getCategory().getId().toString());
+        }
+
         productDTO = this.productService.update(productDTO);
         return ResponseEntity.ok().body(productDTO);
-
-
     }
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable("id") Long id)

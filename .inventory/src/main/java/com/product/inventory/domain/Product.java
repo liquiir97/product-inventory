@@ -27,6 +27,10 @@ public class Product implements Serializable {
     @Column
     private Long quantity;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
+
     @Version
     private Integer version;
 
@@ -76,5 +80,13 @@ public class Product implements Serializable {
 
     public void setVersion(Integer version) {
         this.version = version;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 }
