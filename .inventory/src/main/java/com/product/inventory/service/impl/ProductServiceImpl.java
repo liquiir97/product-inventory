@@ -1,9 +1,12 @@
 package com.product.inventory.service.impl;
 
 import com.product.inventory.domain.Product;
+import com.product.inventory.domain.dto.CategoryDTO;
 import com.product.inventory.domain.dto.ProductDTO;
+import com.product.inventory.mapper.CategoryMapper;
 import com.product.inventory.mapper.ProductMapper;
 import com.product.inventory.repository.ProductRepository;
+import com.product.inventory.service.CategoryService;
 import com.product.inventory.service.ProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,16 +27,28 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductMapper productMapper;
 
-    public ProductServiceImpl(ProductRepository productRepository, ProductMapper productMapper)
+    private final CategoryService categoryService;
+
+    private final CategoryMapper categoryMapper;
+
+    public ProductServiceImpl(ProductRepository productRepository, ProductMapper productMapper, CategoryService categoryService, CategoryMapper categoryMapper)
     {
         this.productRepository = productRepository;
         this.productMapper = productMapper;
+        this.categoryService = categoryService;
+        this.categoryMapper = categoryMapper;
     }
 
     @Override
     public ProductDTO save(ProductDTO productDTO)
     {
-        LOG.debug("Request to save News : {}", productDTO);
+        LOG.debug("Request to save Product : {}", productDTO);
+        if(productDTO.getCategory() != null) {
+            Optional<CategoryDTO> categoryDTO = this.categoryService.findOne(productDTO.getCategory().getId());
+            if (categoryDTO.isPresent()) {
+                productDTO.setCategory(categoryDTO.get());
+            }
+        }
         Product product = this.productMapper.toEntity(productDTO);
         product = this.productRepository.save(product);
         return productMapper.toDto(product);
@@ -43,7 +58,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional(readOnly = true)
     public Optional<ProductDTO> findOne(Long id)
     {
-        LOG.debug("Request to get News : {}", id);
+        LOG.debug("Request to get Product : {}", id);
         return this.productRepository.findById(id).map(ele->this.productMapper.toDto(ele));
     }
 
@@ -51,7 +66,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional(readOnly = true)
     public Page<ProductDTO> findAll(Pageable pageable)
     {
-        LOG.debug("Request to get all News");
+        LOG.debug("Request to get all Products");
         return this.productRepository.findAll(pageable).map(ele->this.productMapper.toDto(ele));
     }
 
@@ -59,9 +74,25 @@ public class ProductServiceImpl implements ProductService {
     public ProductDTO update(ProductDTO productDTO)
     {
         LOG.debug("Request to update Product : {}", productDTO);
-        Product product = this.productMapper.toEntity(productDTO);
-        product = this.productRepository.save(product);
-        return this.productMapper.toDto(product);
+        if(productDTO.getCategory() != null)
+        {
+            Optional<CategoryDTO> categoryDTO = this.categoryService.findOne(productDTO.getCategory().getId());
+            if(categoryDTO.isPresent())
+            {
+                productDTO.setCategory(categoryDTO.get());
+            }
+        }
+        Optional<Product> product = this.productRepository.findById(productDTO.getId());
+        Product productWithVersion = product.get();
+        productWithVersion.setCategory(this.categoryMapper.toEntity(productDTO.getCategory()));
+        productWithVersion.setId(productDTO.getId());
+        productWithVersion.setName(productDTO.getName());
+        productWithVersion.setDescription(productDTO.getDescription());
+        productWithVersion.setPrice(productDTO.getPrice());
+        productWithVersion.setQuantity(productDTO.getQuantity());
+        productWithVersion = this.productRepository.save(productWithVersion);
+
+        return this.productMapper.toDto(productWithVersion);
     }
 
     @Override
