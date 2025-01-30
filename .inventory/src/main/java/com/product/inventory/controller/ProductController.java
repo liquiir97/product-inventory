@@ -2,6 +2,7 @@ package com.product.inventory.controller;
 
 import com.product.inventory.domain.dto.CategoryDTO;
 import com.product.inventory.domain.dto.ProductDTO;
+import com.product.inventory.domain.dto.ProductFilterDTO;
 import com.product.inventory.repository.CategoryRepository;
 import com.product.inventory.repository.ProductRepository;
 import com.product.inventory.service.CategoryService;
@@ -11,7 +12,9 @@ import org.apache.tomcat.util.http.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -114,5 +117,18 @@ public class ProductController {
         LOG.debug("REST request to delete Product : {}", id);
         this.productService.delete(id);
         return  ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<Page<ProductDTO>> findAllByFilter(ProductFilterDTO productFilterDTO, Pageable pageable)
+    {
+        LOG.debug("REST request to get Product by filter");
+        if(pageable == null)
+        {
+            Sort sort = Sort.by(Sort.Direction.ASC, "id");
+            pageable = PageRequest.of(0,10,sort);
+        }
+        Page<ProductDTO> productDTOPage = this.productService.findAllByFilter(productFilterDTO, pageable);
+        return ResponseEntity.ok().body(productDTOPage);
     }
 }

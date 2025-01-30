@@ -3,9 +3,11 @@ package com.product.inventory.service.impl;
 import com.product.inventory.domain.Product;
 import com.product.inventory.domain.dto.CategoryDTO;
 import com.product.inventory.domain.dto.ProductDTO;
+import com.product.inventory.domain.dto.ProductFilterDTO;
 import com.product.inventory.mapper.CategoryMapper;
 import com.product.inventory.mapper.ProductMapper;
 import com.product.inventory.repository.ProductRepository;
+import com.product.inventory.repository.specification.ProductSpecification;
 import com.product.inventory.service.CategoryService;
 import com.product.inventory.service.ProductService;
 import org.slf4j.Logger;
@@ -100,5 +102,13 @@ public class ProductServiceImpl implements ProductService {
     {
         LOG.debug("Request to delete Product : {}", id);
         this.productRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ProductDTO> findAllByFilter(ProductFilterDTO productFilterDTO, Pageable pageable)
+    {
+        LOG.debug("Request to get all Products using filter");
+        return this.productRepository.findAll(ProductSpecification.filterByCriteria(productFilterDTO), pageable).map(ele->this.productMapper.toDto(ele));
     }
 }

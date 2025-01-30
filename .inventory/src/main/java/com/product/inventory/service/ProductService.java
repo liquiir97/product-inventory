@@ -1,6 +1,7 @@
 package com.product.inventory.service;
 
 import com.product.inventory.domain.dto.ProductDTO;
+import com.product.inventory.domain.dto.ProductFilterDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -19,4 +20,6 @@ public interface ProductService {
     ProductDTO update(ProductDTO productDTO);
 
     void delete(Long id);
+
+    Page<ProductDTO> findAllByFilter(ProductFilterDTO productFilterDTO, Pageable pageable);
 }
