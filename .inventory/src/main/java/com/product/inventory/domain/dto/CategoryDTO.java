@@ -1,13 +1,18 @@
 package com.product.inventory.domain.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.Set;
 
 public class CategoryDTO implements Serializable {
 
     private Long id;
-
+    @NotNull(message = "Category name is required.")
+    @NotBlank(message = "Category name cannot be blank")
+    @Size(min = 1, max = 100, message = "Category name must be between 1 and 100 characters")
     private String nameCategory;
 
     public Long getId() {

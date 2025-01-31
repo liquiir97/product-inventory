@@ -1,7 +1,6 @@
 package com.product.inventory.controller;
 
 import com.product.inventory.domain.dto.CategoryDTO;
-import com.product.inventory.domain.dto.ProductDTO;
 import com.product.inventory.repository.CategoryRepository;
 import com.product.inventory.service.CategoryService;
 import jakarta.validation.Valid;
