@@ -27,7 +27,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/product")
+@RequestMapping("/api/products")
 public class ProductController {
 
     private static final Logger LOG = LoggerFactory.getLogger(ProductController.class);

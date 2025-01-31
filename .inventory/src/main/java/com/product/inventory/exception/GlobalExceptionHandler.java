@@ -27,16 +27,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Object> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
         BindingResult bindingResult = ex.getBindingResult();
         List<String> errorCasess = new ArrayList<>();
-        StringBuilder errorMessage = new StringBuilder("Validation failed: ");
-        for (FieldError error : bindingResult.getFieldErrors()) {
-            errorMessage.append(error.getField()).append(" ").append(error.getDefaultMessage()).append(", ");
+
+        for (FieldError error : bindingResult.getFieldErrors())
+        {
             errorCasess.add(error.getDefaultMessage());
         }
-        // Remove last comma
-        if (errorMessage.length() > 0) {
-            errorMessage.setLength(errorMessage.length() - 2);
-        }
-        LOG.debug("REST AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA : ");
+
         Map<String,List<String>> error = new HashMap<>();
         error.put("message", errorCasess);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);

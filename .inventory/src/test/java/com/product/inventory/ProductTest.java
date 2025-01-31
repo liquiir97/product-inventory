@@ -100,7 +100,7 @@ public class ProductTest {
         when(categoryRepository.existsById(any(Long.class))).thenReturn(true);
 
         // When & Then
-        mockMvc.perform(post("/api/product")
+        mockMvc.perform(post("/api/products")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"Product 1\",\"description\":\"Product Description\",\"price\":100.0,\"quantity\":10,\"category\":{\"id\":1}}"))
                 .andExpect(status().isCreated())
@@ -139,7 +139,7 @@ public class ProductTest {
         when(productService.findOne(anyLong())).thenReturn(Optional.of(productDTO));
 
         // When & Then
-        mockMvc.perform(get("/api/product/1"))
+        mockMvc.perform(get("/api/products/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1L))
                 .andExpect(jsonPath("$.name").value("Product 1"))
@@ -152,7 +152,7 @@ public class ProductTest {
         when(productService.findOne(anyLong())).thenReturn(Optional.empty());
 
         // When & Then
-        mockMvc.perform(get("/api/product/1"))
+        mockMvc.perform(get("/api/products/1"))
                 .andExpect(status().isNotFound());
     }
 
@@ -185,7 +185,7 @@ public class ProductTest {
         //when(productService.findAll(any(Pageable.class))).thenReturn(productPage);
 
         // When & Then
-        mockMvc.perform(get("/api/product")
+        mockMvc.perform(get("/api/products")
                         .param("page", "0")
                         .param("size", "10")
                         .param("sort", "name,asc"))
@@ -233,7 +233,7 @@ public class ProductTest {
         when(productRepository.existsById(anyLong())).thenReturn(true); // Mocking that product with id exists
 
         // When & Then: Perform PUT request to update the product
-        mockMvc.perform(put("/api/product/1") // Make sure the ID in URL is 1
+        mockMvc.perform(put("/api/products/1") // Make sure the ID in URL is 1
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"id\":1,\"name\":\"Updated Product\",\"description\":\"Updated Description\",\"price\":150.0,\"quantity\":20,\"category\":{\"id\":1}}")) // Include the ID in the body
                 .andExpect(status().isOk())
@@ -251,7 +251,7 @@ public class ProductTest {
         product.setName("Product 1");
 
         // When & Then
-        mockMvc.perform(delete("/api/product/1"))
+        mockMvc.perform(delete("/api/products/1"))
                 .andExpect(status().isNoContent());
     }
 
