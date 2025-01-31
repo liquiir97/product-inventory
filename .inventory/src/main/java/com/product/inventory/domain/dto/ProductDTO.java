@@ -1,5 +1,8 @@
 package com.product.inventory.domain.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.product.inventory.domain.dto.validation.StrictDoubleDeserializer;
+import com.product.inventory.domain.dto.validation.StrictLongDeserializer;
 import jakarta.validation.constraints.*;
 
 import java.io.Serializable;
@@ -18,9 +21,11 @@ public class ProductDTO implements Serializable {
     private String description;
     @NotNull(message = "Product price is required.")
     @DecimalMin(value = "0.0", inclusive = false, message = "Price must be greater than 0")
+    @JsonDeserialize(using = StrictDoubleDeserializer.class)
     private Double price;
     @NotNull(message = "Product quantity is required.")
     @Min(value = 0, message = "Quantity must be greater than or equal to 0")
+    @JsonDeserialize(using = StrictLongDeserializer.class)
     private Long quantity;
 
     private CategoryDTO category;
