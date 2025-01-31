@@ -1,4 +1,5 @@
 # product-inventory
+##Project is stored in folder .inventory
 
 ## Advanced Features
 
