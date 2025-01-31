@@ -5,24 +5,21 @@ import com.product.inventory.domain.dto.ProductDTO;
 import com.product.inventory.domain.dto.ProductFilterDTO;
 import com.product.inventory.repository.CategoryRepository;
 import com.product.inventory.repository.ProductRepository;
-import com.product.inventory.service.CategoryService;
 import com.product.inventory.service.ProductService;
-import io.swagger.v3.oas.annotations.Operation;
-import org.apache.tomcat.util.http.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import jakarta.validation.Valid;
 
-import java.net.URISyntaxException;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -47,7 +44,7 @@ public class ProductController {
         this.categoryRepository = categoryRepository;
     }
 
-    @PostMapping("")
+    @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ProductDTO> save(@Valid @RequestBody ProductDTO productDTO)
     {
         LOG.debug("REST request to save Product : {}", productDTO);
@@ -67,15 +64,15 @@ public class ProductController {
         return new ResponseEntity<>(productDTO, HttpStatus.CREATED);
     }
 
-    @GetMapping("")
-    public ResponseEntity<Page<ProductDTO>> getAllProducts(Pageable pageable)
+    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Page<ProductDTO>> getAllProducts(@ParameterObject Pageable pageable)
     {
         LOG.debug("REST request to get a page of Products");
         Page<ProductDTO> productDTOPage = this.productService.findAll(pageable);
         return ResponseEntity.ok().body(productDTOPage);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ProductDTO> getById(@PathVariable("id") Long id)
     {
         LOG.debug("GET request to get Product by id {}", id);
@@ -84,7 +81,7 @@ public class ProductController {
         return productDTOOptional.map(productDTO -> new ResponseEntity<>(productDTO, HttpStatus.OK)).orElse(ResponseEntity.notFound().build());
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ProductDTO> updateProduct(@PathVariable(value = "id", required = false) final Long id, @RequestBody ProductDTO productDTO)
     {
         LOG.debug("REST request to update Product : {}, {}", id, productDTO);
@@ -111,7 +108,7 @@ public class ProductController {
         productDTO = this.productService.update(productDTO);
         return ResponseEntity.ok().body(productDTO);
     }
-    @DeleteMapping("/{id}")
+    @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> deleteProduct(@PathVariable("id") Long id)
     {
         LOG.debug("REST request to delete Product : {}", id);
@@ -119,8 +116,8 @@ public class ProductController {
         return  ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/filter")
-    public ResponseEntity<Page<ProductDTO>> findAllByFilter(ProductFilterDTO productFilterDTO, Pageable pageable)
+    @GetMapping(value = "/filter" , produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Page<ProductDTO>> findAllByFilter(@ParameterObject ProductFilterDTO productFilterDTO, @ParameterObject Pageable pageable)
     {
         LOG.debug("REST request to get Product by filter");
         if(pageable == null)

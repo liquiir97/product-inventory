@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -33,7 +34,7 @@ public class CategoryController {
     }
 
 
-    @PostMapping("")
+    @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CategoryDTO> save(@Valid @RequestBody CategoryDTO categoryDTO)
     {
         LOG.debug("REST request to save Category : {}", categoryDTO);
@@ -48,7 +49,7 @@ public class CategoryController {
         return new ResponseEntity<>(categoryDTO, HttpStatus.CREATED);
     }
 
-    @GetMapping("")
+    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<CategoryDTO>> getAllCategories(Pageable pageable)
     {
         LOG.debug("REST request to get a page of Categories");
@@ -56,7 +57,7 @@ public class CategoryController {
         return ResponseEntity.ok().body(categoryDTOPage);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CategoryDTO> getById(@PathVariable("id") Long id)
     {
         LOG.debug("GET request to get Category by id {}", id);
@@ -65,7 +66,7 @@ public class CategoryController {
         return categoryDTOOptional.map(categoryDTO -> new ResponseEntity<>(categoryDTO, HttpStatus.OK)).orElse(ResponseEntity.notFound().build());
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CategoryDTO> updateCategory(@PathVariable(value = "id", required = false) final Long id, @RequestBody CategoryDTO categoryDTO)
     {
         LOG.debug("REST request to update Category : {}, {}", id, categoryDTO);
@@ -88,7 +89,7 @@ public class CategoryController {
         return ResponseEntity.ok().body(categoryDTO);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> deleteCategory(@PathVariable("id") Long id)
     {
         LOG.debug("REST request to delete Product : {}", id);
